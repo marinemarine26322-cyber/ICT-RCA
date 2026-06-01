@@ -1,0 +1,519 @@
+{
+  "port": {
+    "isPhysical": {
+      "description": "(boolean) 是否为物理端口。用于区分物理口、Eth-Trunk、子接口。逻辑口查询光功率时应返回null。",
+      "change_type": "added"
+    },
+    "portType": {
+      "description": "(enum) 端口类型。取值：Physical, Eth-Trunk, Sub-interface, Loopback。",
+      "change_type": "added"
+    },
+    "activeMemberCount": {
+      "description": "(integer) Eth-Trunk 当前处于 Up 状态的成员口数量。",
+      "change_type": "added"
+    },
+    "totalMemberCount": {
+      "description": "(integer) Eth-Trunk 配置的总成员口数量。",
+      "change_type": "added"
+    },
+    "currentAlarms": {
+      "description": "(array) 当前端口挂载的活动告警名称列表。无告警返回空数组。",
+      "change_type": "added"
+    },
+    "isSameFecMode": {
+      "description": "(boolean) 两端端口是否为相同的FEC模式"
+    },
+    "isSamePortWorkMode": {
+      "description": "(boolean) 两端端口是否为相同的工作模式"
+    },
+    "portAdminStatus": {
+      "description": "(string) 端口管理状态，取值 up|down, 无值返回空字符串"
+    },
+    "portOperateStatus": {
+      "description": "(string) 端口运行状态，取值 up|down, 无值返回空字符串"
+    },
+    "portOpticalPowerStatus": {
+      "description": "(string) 状态枚举，normal/abnormal。逻辑口必须返回 NOT_APPLICABLE。",
+      "original_description": "(string) 状态枚举，normal代表端口的收发光都正常，abnormal代表收光或发光至少有一个状态不为正常",
+      "change_type": "modified"
+    },
+    "inPower": {
+      "description": "(number) 输入光功率。逻辑口返回 null。",
+      "original_description": "(number) 输入光功率",
+      "change_type": "modified"
+    },
+    "inPowerStatus": {
+      "description": "(string) 输入光功率状态：强光、弱光、正常、无光。逻辑口返回 null。",
+      "original_description": "(string) 输入光功率状态，返回值包括：强光、弱光、正常、无光",
+      "change_type": "modified"
+    },
+    "outPower": {
+      "description": "(number) 输出光功率。逻辑口返回 null。",
+      "original_description": "(number) 输出光功率",
+      "change_type": "modified"
+    },
+    "outPowerStatus": {
+      "description": "(string) 输出光功率状态：强光、弱光、正常、无光。逻辑口返回 null。",
+      "original_description": "(string) 输出光功率状态，返回值包括：强光、弱光、正常、无光",
+      "change_type": "modified"
+    },
+    "portOpticalPowerErrCode": {
+      "description": "(enum) 端口光功率错误码：NONE, DEV_OFFLINE, BOARD_STATUS_ABNORMAL, NOT_APPLICABLE(逻辑口)。",
+      "original_description": "(enum(string)) 端口光功率错误码，NONE：无报错，DEV_OFFLINE：端口所属网元离线，BOARD_STATUS_ABNORMAL：端口所属单板状态异常",
+      "change_type": "modified"
+    },
+    "portOpticalPowerDetails.portOpticalPowerInfo.inPower": {
+      "description": "(number) 输入光功率"
+    },
+    "portOpticalPowerDetails.portOpticalPowerInfo.minInPower": {
+      "description": "(number) 输入下门限"
+    },
+    "portOpticalPowerDetails.portOpticalPowerInfo.maxInPower": {
+      "description": "(number) 输入上门限"
+    },
+    "portOpticalPowerDetails.portOpticalPowerInfo.outPower": {
+      "description": "(number) 输出光功率"
+    },
+    "portOpticalPowerDetails.portOpticalPowerInfo.minOutPower": {
+      "description": "(number) 输出下门限"
+    },
+    "portOpticalPowerDetails.portOpticalPowerInfo.maxOutPower": {
+      "description": "(number) 输出上门限"
+    },
+    "isOffline": {
+      "description": "(boolean) 对端网元是否掉电"
+    },
+    "isManagedPE": {
+      "description": "(boolean) 对端网元是否纳管。若为false，remotePort状态应返回Unknown。",
+      "original_description": "(boolean) 对端网元是否纳管（是否为传输侧网元）",
+      "change_type": "modified"
+    },
+    "isNormal": {
+      "description": "(boolean) 网络是否正常"
+    },
+    "isOpticalNormal": {
+      "description": "(boolean) 光功率是否正常"
+    },
+    "aEndAlarmNames": {
+      "description": "(string) 本端历史告警名称"
+    },
+    "zEndAlarmNames": {
+      "description": "(string) 对端历史告警名称"
+    }
+  },
+  "link": {
+    "localPortFaultType": {
+      "description": "(string) 源端端口故障等级：Critical, Major, Minor, Unknown, Normal。"
+    },
+    "localPortDetailInfo": {
+      "description": "(string) 源端端口故障详细信息"
+    },
+    "remotePortFaultType": {
+      "description": "(string) 对端端口故障等级。若对端未纳管(isManagedPE=false)，必须返回 Unknown。",
+      "original_description": "(string) 对端端口故障等级，可能的取值为：Critical、Major、Minor、Unknown、Normal，其中Unknown和Normal代表没有明确的风险，其他取值代表存在脏污隐患",
+      "change_type": "modified"
+    },
+    "remotePortDetailInfo": {
+      "description": "(string) 对端故障详情。若对端未纳管，返回 '对端设备未纳管/不在拓扑范围内'。",
+      "original_description": "(string) 对端端口故障详细信息，当故障等级不为Unknown和Normal时，作为诊断结论返回",
+      "change_type": "modified"
+    }
+  },
+  "card": {
+    "cardList.cardCategory": {
+      "description": "(string) 单板类型"
+    },
+    "cardType": {
+      "description": "(enum) 单板类型：FAN, POWER, MPU, LPU, SPU, SFU, PIC(物理接口子卡), OTHERS。",
+      "original_description": "(string) 单板类型，包含：FAN（风扇板）, POWER（电源板）, MPU（主控板）, LPU（接口板）, SPU（业务板）, SFU（网板）, OTHERS（其他类型）",
+      "change_type": "modified"
+    },
+    "cardRegistered": {
+      "description": "(boolean) 单板是否注册"
+    },
+    "cardStatus": {
+      "description": "(string) 单板状态：NORMAL, FAULT, OFFLINE, NOT_INSTALL 等。"
+    },
+    "currentAlarms": {
+      "description": "(array) 当前单板挂载的活动告警名称列表。",
+      "change_type": "added"
+    }
+  },
+  "tunnel": {
+    "tunnelOperateStatus": {
+      "description": "(string) 隧道整体运行状态：up, down。",
+      "change_type": "added"
+    },
+    "tunnelOamStatus": {
+      "description": "(string) 隧道 OAM 状态：normal, defect, timeout。",
+      "change_type": "added"
+    },
+    "currentAlarms": {
+      "description": "(array) 当前 Tunnel 挂载的活动告警列表。",
+      "change_type": "added"
+    },
+    "remainBwForAllTunnels": {
+      "description": "(number) 所有隧道的最小剩余带宽"
+    },
+    "remainBwRatioForAllTunnels": {
+      "description": "(number) 所有隧道的最小剩余带宽占比"
+    },
+    "tunnelResults.tunnelRemainBw": {
+      "description": "(string) 隧道的最小剩余带宽"
+    },
+    "tunnelResults.tunnelRemainBwRatio": {
+      "description": "(string) 隧道的最小剩余带宽占比"
+    },
+    "tunnelResults.hopRemainBw.linkId": {
+      "description": "(string) 链路id"
+    },
+    "tunnelResults.hopRemainBw.linkTopoId": {
+      "description": "(string) 拓扑标识唯一链路的id"
+    },
+    "tunnelResults.hopRemainBw.linkName": {
+      "description": "(string) 链路名称"
+    },
+    "tunnelResults.hopRemainBw.remainBw": {
+      "description": "(string) 链路剩余带宽"
+    },
+    "tunnelResults.hopRemainBw.remainBwRatio": {
+      "description": "(string) 链路剩余带宽占比"
+    },
+    "topoObj.nodes.commuState": {
+      "description": "(string) 网元通信状态，0 在线，1 离线"
+    },
+    "incidentObjList": {
+      "description": "(object)"
+    },
+    "faultPortResIdList": {
+      "description": "(string)"
+    },
+    "faultNeResIdList": {
+      "description": "(string)"
+    },
+    "faultCardResIdList": {
+      "description": "(string)"
+    },
+    "alarmObjList": {
+      "description": "(object)"
+    },
+    "notPingReachableTunnelObjList": {
+      "description": "(object)"
+    },
+    "pingRstObjList": {
+      "description": "(object)"
+    },
+    "notTraceReachableTunnelObjList": {
+      "description": "(object)"
+    },
+    "traceRstObjList.tunnelObj.name": {
+      "description": "(string) 名字"
+    },
+    "traceRstObjList.tunnelObj.role": {
+      "description": "(string) tunnel角色类型, WORK:工作, PROTECT:保护"
+    },
+    "traceRstObjList.tunnelObj.instance": {
+      "description": "(object) lsp ping和trace下发需要的数据结构，大模型不解析，透传"
+    },
+    "traceRstObjList.tunnelObj.srcNeName": {
+      "description": "(string) 源网元名称"
+    },
+    "traceRstObjList.tunnelObj.snkNeName": {
+      "description": "(string) 宿网元名称"
+    },
+    "traceRstObjList.traceRstList.errorCode": {
+      "description": "(integer) 状态码,0为成功，否则失败"
+    },
+    "traceRstObjList.traceRstList.sourceName": {
+      "description": "(string) 源"
+    },
+    "traceRstObjList.traceRstList.desName": {
+      "description": "(string) 宿"
+    },
+    "traceRstObjList.traceRstList.direction": {
+      "description": "(string) 方向"
+    },
+    "traceRstObjList.traceRstList.role": {
+      "description": "(string) 角色"
+    },
+    "traceRstObjList.traceRstList.reason": {
+      "description": "(string) 失败原因"
+    },
+    "traceRstObjList.traceRstList.tunnelName": {
+      "description": "(string) tunnelName"
+    },
+    "traceRstObjList.traceRstList.tracerHop.seq": {
+      "description": "(integer) 逐跳序号"
+    },
+    "traceRstObjList.traceRstList.tracerHop.midIp": {
+      "description": "(string) 中间ip"
+    },
+    "traceRstObjList.traceRstList.tracerHop.minDelay": {
+      "description": "(integer) 最小时延"
+    },
+    "traceRstObjList.traceRstList.tracerHop.maxDelay": {
+      "description": "(integer) 最大时延"
+    },
+    "traceRstObjList.traceRstList.tracerHop.avgDelay": {
+      "description": "(integer) 平均时延"
+    },
+    "traceRstObjList.traceRstList.nodeDiagnoseInfo.refNeName": {
+      "description": "(string) 挂载网元名称"
+    },
+    "traceRstObjList.traceRstList.nodeDiagnoseInfo.neStatus": {
+      "description": "(string) 挂载网元状态"
+    },
+    "traceRstObjList.traceRstList.nodeDiagnoseInfo.portName": {
+      "description": "(string) 端口名称"
+    },
+    "traceRstObjList.traceRstList.nodeDiagnoseInfo.operateStatus": {
+      "description": "(string) 端口运行状态"
+    },
+    "traceRstObjList.traceRstList.nodeDiagnoseInfo.adminStatus": {
+      "description": "(string) 端口管理状态"
+    },
+    "traceRstObjList.traceRstList.nodeDiagnoseInfo.alarmNum": {
+      "description": "(string) 告警条数"
+    },
+    "traceRstObjList.traceRstList.nodeDiagnoseInfo.alarmNames": {
+      "description": "(string) 告警名称"
+    },
+    "traceRstObjList.traceRstList.nodeDiagnoseInfo.powerStatus": {
+      "description": "(string) 光功率状态：正常/异常"
+    },
+    "isFillTunnelObjList": {
+      "description": "(boolean) 是否对隧道列表进行了补充"
+    }
+  },
+  "alarm": {
+    "alarms.csn": {
+      "description": "(string) 流水号"
+    },
+    "alarms.alarmName": {
+      "description": "(string) 告警名称"
+    },
+    "alarms.occurUtc": {
+      "description": "(integer) 发生时间，单位为毫秒的时间戳"
+    },
+    "alarms.clearUtc": {
+      "description": "(integer) 清除时间，单位为毫秒的时间戳"
+    },
+    "alarms.extParam": {
+      "description": "(string) 告警的扩展参数"
+    },
+    "alarms.resourceResId": {
+      "description": "(string) 产生该告警的具体资源对象 resId。",
+      "change_type": "added"
+    },
+    "alarms.resourceType": {
+      "description": "(enum) 资源类型：NE, Card, Port, Link, Tunnel, PW。",
+      "change_type": "added"
+    },
+    "alarmNames": {
+      "description": "(string)"
+    },
+    "deviceType": {
+      "description": "(string) 告警源网元型号"
+    }
+  },
+  "base_station": {
+    "accessRingObj": {
+      "description": "(unknown) 接入环"
+    },
+    "aggregationRingObj": {
+      "description": "(unknown) 汇聚环"
+    },
+    "offLineRangeTopoObjList": {
+      "description": "(object)"
+    },
+    "sapOfflineRangeObjList": {
+      "description": "(object)"
+    }
+  },
+  "clock": {
+    "alarms": {
+      "description": "(object)"
+    },
+    "clockPathList": {
+      "description": "(object)"
+    },
+    "alarmNeResId": {
+      "description": "(string) 存在时钟告警的第一个网元资源ID"
+    }
+  },
+  "ne": {
+    "currentAlarms": {
+      "description": "(array) 网元级活动告警列表。",
+      "change_type": "added"
+    },
+    "neStatus": {
+      "description": "(string) online是在线，offline是离线"
+    },
+    "topoObj": {
+      "description": "(unknown) 指定区域的网元、链路拓扑信息"
+    },
+    "incidentObjList": {
+      "description": "(object)"
+    },
+    "faultPortResIdList": {
+      "description": "(string)"
+    },
+    "faultNeResIdList": {
+      "description": "(string)"
+    },
+    "faultCardResIdList": {
+      "description": "(string)"
+    },
+    "alarmObjList": {
+      "description": "(object)"
+    },
+    "offlineRangeCategory": {
+      "description": "(string) 判断网元脱管区域的枚举"
+    },
+    "isPortAllDown": {
+      "description": "(boolean) 是否全部down"
+    },
+    "portAlarmObjList": {
+      "description": "(object)"
+    },
+    "contemporaneous": {
+      "description": "(boolean) 是否同时告警"
+    },
+    "resetInTimeDifference": {
+      "description": "(boolean) 是否在指定的时间差内复位"
+    },
+    "resetRecords": {
+      "description": "(string)"
+    },
+    "clkTimeLockSta": {
+      "description": "(string) 时间跟踪状态"
+    },
+    "clkFreqLockSta": {
+      "description": "(string) 频率跟踪状态"
+    },
+    "poPtpSrcTraceClkid": {
+      "description": "(string) 当前跟踪主时钟编号"
+    },
+    "hasPtpSetUni": {
+      "description": "(boolean) PTP时钟跟踪状态中是否配置U口"
+    },
+    "poPtpPreSetState": {
+      "description": "(integer) 端口预选状态"
+    },
+    "poPtpRealPortState": {
+      "description": "(integer) 端口实际状态"
+    },
+    "poPtpSyncInterval": {
+      "description": "(string) SYNC报文周期"
+    },
+    "poPtpDlyReqInterval": {
+      "description": "(string) DELAY报文周期"
+    },
+    "poPtpAnnInterval": {
+      "description": "(string) ANNOUNCE报文周期"
+    },
+    "maxPassive": {
+      "description": "(integer) 所有查询网元的最大时钟偏差值"
+    },
+    "passiveList": {
+      "description": "(object)"
+    },
+    "nePortDCNStatusList.name": {
+      "description": "(string) 名字"
+    },
+    "nePortDCNStatusList.productName": {
+      "description": "(string) 设备类型"
+    },
+    "nePortDCNStatusList.commuState": {
+      "description": "(string) 网元通信状态，0 在线，1 离线"
+    },
+    "nePortDCNStatusList.portObjList.name": {
+      "description": "(string) 名字"
+    },
+    "nePortDCNStatusList.portObjList.neNativeId": {
+      "description": "(string) 网元nativeId"
+    },
+    "nePortDCNStatusList.portObjList.nativeId": {
+      "description": "(string) 端口nativeId"
+    },
+    "nePortDCNStatusList.portObjList.operateState": {
+      "description": "(string) 运行状态，0 UP，1 DOWN,其他 DOWN"
+    },
+    "nePortDCNStatusList.portObjList.adminState": {
+      "description": "(string) 管理状态，active 激活，inactive 未激活"
+    },
+    "nePortDCNStatusList.lspPingResult.notPingReachableTunnelObjList": {
+      "description": "(object)"
+    },
+    "nePortDCNStatusList.lspPingResult.pingRstObjList": {
+      "description": "(object)"
+    },
+    "dcnFaultType": {
+      "description": "(string) DCN脱管的故障类型枚举"
+    },
+    "offlineOrMpuFaultNeResIds": {
+      "description": "(string)"
+    },
+    "downAndDcnEnabledPortResIds": {
+      "description": "(string)"
+    }
+  },
+  "ring": {
+    "incidentObjList": {
+      "description": "(object)"
+    },
+    "faultPortResIdList": {
+      "description": "(string)"
+    },
+    "faultNeResIdList": {
+      "description": "(string)"
+    },
+    "faultCardResIdList": {
+      "description": "(string)"
+    },
+    "alarmObjList": {
+      "description": "(object)"
+    }
+  },
+  "service": {
+    "sapStatus": {
+      "description": "(string) 业务接入点(SAP)状态：up, down。",
+      "change_type": "added"
+    },
+    "bindingPwStatus": {
+      "description": "(string) 绑定的 PW 状态：up, down。",
+      "change_type": "added"
+    },
+    "isPacketLoss": {
+      "description": "(boolean) 是否丢包"
+    },
+    "isL3Vpn": {
+      "description": "(boolean) 是否是L3VPN"
+    },
+    "pingRstObjList": {
+      "description": "(object)"
+    }
+  },
+  "pw": {
+    "pwOperateStatus": {
+      "description": "(string) 伪线运行状态：up, down, admin-down。",
+      "change_type": "added"
+    },
+    "pwOamStatus": {
+      "description": "(string) 伪线 OAM 状态：normal, defect, disabled。",
+      "change_type": "added"
+    },
+    "pwFaultType": {
+      "description": "(string) 伪线故障类型：NONE, TUNNEL_DOWN, PW_FORWARD_MISMATCH, OAM_TIMEOUT。",
+      "change_type": "added"
+    },
+    "currentAlarms": {
+      "description": "(array) 当前 PW 挂载的活动告警列表。",
+      "change_type": "added"
+    },
+    "bindingTunnelStatus": {
+      "description": "(string) 绑定的底层 Tunnel 状态：up, down。",
+      "change_type": "added"
+    }
+  }
+}
