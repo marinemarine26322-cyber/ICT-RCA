@@ -10,40 +10,11 @@
 
 ### 1.2 组网与拓扑图
 
+> mermaid语法描述拓扑图
+
 ```mermaid
-graph TD
-    subgraph NE1 ["NE1: HPNPCR1移通大厦-1027"]
-        P1["Port: 21-TPA1EX8S-6"]
-    end
 
-    subgraph NE2 ["NE2: PMR1-SJDD-PTN6900-HX2 (故障网元)"]
-        Card["Card: CR57L5XFB 6/0 (根因)"]
-        P2["Port: GE6/0/3 (同板端口)"]
-        P3["Port: GE4/0/1 (正常端口)"]
-        Trunk["Trunk: Eth-Trunk66"]
-        
-        Card -->|物理绑定| P2
-        P2 -->|逻辑聚合| Trunk
-    end
-
-    subgraph NE3 ["NE3: PMR1-YBL-PTN7900-HX1"]
-        P4["Port: 3-TPA6EX16S-2"]
-        P5["Port: 3-TPA6EX16S-7"]
-    end
-
-    P3 <-->|光纤链路（正常）| P5
-    P1 <-->|光纤链路 （正常）| P4
-    
-    %% 故障链路
-    P2 -.->|l-331 （中断）| Peer[“对端端口 （未纳管/UNI）”]
-
-    style Card fill:#fee2e2,stroke:#ef4444,stroke-width:3px
-    style P2 fill:#fee2e2,stroke:#ef4444,stroke-width:2px
-    style Trunk fill:#fef3c7,stroke:#f59e0b,stroke-width:2px
 ```
-
-
----
 
 ## 2. 根因影响链 (传导路径)
 
