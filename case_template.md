@@ -9,6 +9,7 @@
 * **故障机理**：LPU/PIC 单板底层硬件寄存器异常或驱动故障，导致单板状态机进入 `FAULT` 隔离态。系统为防止错误数据转发，强制将该单板下挂的所有物理端口 PHY 层 Shutdown，并停止光模块发光。
 
 ### 1.2 组网与拓扑图
+
 ```mermaid
 graph TD
     subgraph NE1 ["NE1: HPNPCR1移通大厦-1027"]
@@ -30,16 +31,17 @@ graph TD
         P5["Port: 3-TPA6EX16S-7"]
     end
 
-    P3 <-->|光纤链路 (正常)| P5
-    P1 <-->|光纤链路 (正常)| P4
+    P3 <-->|光纤链路（正常）| P5
+    P1 <-->|光纤链路 （正常）| P4
     
     %% 故障链路
-    P2 -.->|l-331 (中断)| Peer["对端端口 (未纳管/UNI)"]
+    P2 -.->|l-331 （中断）| Peer[“对端端口 （未纳管/UNI）”]
 
     style Card fill:#fee2e2,stroke:#ef4444,stroke-width:3px
     style P2 fill:#fee2e2,stroke:#ef4444,stroke-width:2px
     style Trunk fill:#fef3c7,stroke:#f59e0b,stroke-width:2px
 ```
+
 
 ---
 
