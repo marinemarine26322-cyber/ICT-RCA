@@ -1,0 +1,542 @@
+{
+  "metadata": {
+    "source_file": "/workspace/topology_anonymized.md",
+    "resource_types": [
+      "FixedNetworkCard",
+      "FixedNetworkElement",
+      "FixedNetworkLTP",
+      "FixedNetworkLink",
+      "PW",
+      "PWE3Trail",
+      "PWE3XC",
+      "PWTrail",
+      "ServiceAccessPoint",
+      "TunnelHop",
+      "TunnelTrail"
+    ],
+    "total_resources": 74
+  },
+  "topology": {
+    "FixedNetworkCard": [
+      {
+        "resId": "68ae10be-235d-11ea-b4b3-286ed4a6f283",
+        "name": "TPA2EG24 24",
+        "cardCategory": "LPU",
+        "FixedNetworkElement.refParentNE": "BR-CityB-ACC-54"
+      },
+      {
+        "resId": "68ae1124-235d-11ea-b4b3-286ed4a6f283",
+        "name": "TPA1EX8S 21",
+        "cardCategory": "LPU",
+        "FixedNetworkElement.refParentNE": "BR-CityB-ACC-54"
+      },
+      {
+        "resId": "77838532-235d-11ea-a3da-286ed4a6f283",
+        "name": "CR57L5XFB 5/0",
+        "cardCategory": "PIC",
+        "FixedNetworkElement.refParentNE": "NE-CityB-DIST-44"
+      },
+      {
+        "resId": "7783ac9c-235d-11ea-a3da-286ed4a6f283",
+        "name": "CR57L5XFB 6/0",
+        "cardCategory": "PIC",
+        "FixedNetworkElement.refParentNE": "NE-CityB-DIST-44"
+      },
+      {
+        "resId": "7783ace0-235d-11ea-a3da-286ed4a6f283",
+        "name": "CR57L5XFB 4/0",
+        "cardCategory": "PIC",
+        "FixedNetworkElement.refParentNE": "NE-CityB-DIST-44"
+      },
+      {
+        "resId": "0bb7a769-af12-11ec-a894-286ed4a6f0f7",
+        "name": "TPA6EX16S",
+        "cardCategory": "LPU",
+        "FixedNetworkElement.refParentNE": "SW-CityA-DIST-69"
+      },
+      {
+        "resId": "68ae1068-235d-11ea-b4b3-286ed4a6f283",
+        "name": "TPB1FAN 30",
+        "cardCategory": "FAN",
+        "FixedNetworkElement.refParentNE": "BR-CityB-ACC-54"
+      },
+      {
+        "resId": "68b6e9e5-235d-11ea-b4b3-286ed4a6f283",
+        "name": "TPB1PIU 37",
+        "cardCategory": "POWER",
+        "FixedNetworkElement.refParentNE": "BR-CityB-ACC-54"
+      },
+      {
+        "resId": "68b6ea64-235d-11ea-b4b3-286ed4a6f283",
+        "name": "TPB3CXP 41",
+        "cardCategory": "MPU",
+        "FixedNetworkElement.refParentNE": "BR-CityB-ACC-54"
+      },
+      {
+        "resId": "0af6c853-af12-11ec-a894-286ed4a6f0f7",
+        "name": "TPD1FAN",
+        "cardCategory": "FAN",
+        "FixedNetworkElement.refParentNE": "SW-CityA-DIST-69"
+      },
+      {
+        "resId": "0b281188-af12-11ec-a894-286ed4a6f0f7",
+        "name": "TPD1PSU",
+        "cardCategory": "POWER",
+        "FixedNetworkElement.refParentNE": "SW-CityA-DIST-69"
+      },
+      {
+        "resId": "68b6c3e0-235d-11ea-b4b3-286ed4a6f283",
+        "name": "TPB1PIU 31",
+        "cardCategory": "POWER",
+        "FixedNetworkElement.refParentNE": "BR-CityB-ACC-54"
+      },
+      {
+        "resId": "777be39c-235d-11ea-a3da-286ed4a6f283",
+        "name": "MPU 17",
+        "cardCategory": "MPU",
+        "FixedNetworkElement.refParentNE": "NE-CityB-DIST-44"
+      },
+      {
+        "resId": "777bbd28-235d-11ea-a3da-286ed4a6f283",
+        "name": "POWER 26",
+        "cardCategory": "POWER",
+        "FixedNetworkElement.refParentNE": "NE-CityB-DIST-44"
+      },
+      {
+        "resId": "0aeed912-af12-11ec-a894-286ed4a6f0f7",
+        "name": "TPD1FAN",
+        "cardCategory": "FAN",
+        "FixedNetworkElement.refParentNE": "SW-CityA-DIST-69"
+      },
+      {
+        "resId": "0b3705aa-af12-11ec-a894-286ed4a6f0f7",
+        "name": "TPD1PSU",
+        "cardCategory": "POWER",
+        "FixedNetworkElement.refParentNE": "SW-CityA-DIST-69"
+      },
+      {
+        "resId": "0b3d6e4b-af12-11ec-a894-286ed4a6f0f7",
+        "name": "TPD1PSU",
+        "cardCategory": "POWER",
+        "FixedNetworkElement.refParentNE": "SW-CityA-DIST-69"
+      },
+      {
+        "resId": "684cddca-235d-11ea-b4b3-286ed4a6f283",
+        "name": "TPB1PSU 34",
+        "cardCategory": "POWER",
+        "FixedNetworkElement.refParentNE": "BR-CityB-ACC-54"
+      },
+      {
+        "resId": "777b9604-235d-11ea-a3da-286ed4a6f283",
+        "name": "FAN 30",
+        "cardCategory": "FAN",
+        "FixedNetworkElement.refParentNE": "NE-CityB-DIST-44"
+      },
+      {
+        "resId": "777bbd3c-235d-11ea-a3da-286ed4a6f283",
+        "name": "FAN 27",
+        "cardCategory": "FAN",
+        "FixedNetworkElement.refParentNE": "NE-CityB-DIST-44"
+      },
+      {
+        "resId": "0b0a9e75-af12-11ec-a894-286ed4a6f0f7",
+        "name": "TPD1PSU",
+        "cardCategory": "POWER",
+        "FixedNetworkElement.refParentNE": "SW-CityA-DIST-69"
+      },
+      {
+        "resId": "0b148986-af12-11ec-a894-286ed4a6f0f7",
+        "name": "TPD1PSU",
+        "cardCategory": "POWER",
+        "FixedNetworkElement.refParentNE": "SW-CityA-DIST-69"
+      },
+      {
+        "resId": "684cb898-235d-11ea-b4b3-286ed4a6f283",
+        "name": "TPB1PSU 33",
+        "cardCategory": "POWER",
+        "FixedNetworkElement.refParentNE": "BR-CityB-ACC-54"
+      },
+      {
+        "resId": "684cdde3-235d-11ea-b4b3-286ed4a6f283",
+        "name": "TPB1PSU 35",
+        "cardCategory": "POWER",
+        "FixedNetworkElement.refParentNE": "BR-CityB-ACC-54"
+      },
+      {
+        "resId": "777b9601-235d-11ea-a3da-286ed4a6f283",
+        "name": "POWER 25",
+        "cardCategory": "POWER",
+        "FixedNetworkElement.refParentNE": "NE-CityB-DIST-44"
+      },
+      {
+        "resId": "777c0ac9-235d-11ea-a3da-286ed4a6f283",
+        "name": "MPU 18",
+        "cardCategory": "MPU",
+        "FixedNetworkElement.refParentNE": "NE-CityB-DIST-44"
+      },
+      {
+        "resId": "750df508-afab-11ec-a894-286ed4a6f0f7",
+        "name": "TPD1FAN",
+        "cardCategory": "FAN",
+        "FixedNetworkElement.refParentNE": "SW-CityA-DIST-69"
+      },
+      {
+        "resId": "68ae1099-235d-11ea-b4b3-286ed4a6f283",
+        "name": "TPB1FAN 29",
+        "cardCategory": "FAN",
+        "FixedNetworkElement.refParentNE": "BR-CityB-ACC-54"
+      },
+      {
+        "resId": "0ae69bb1-af12-11ec-a894-286ed4a6f0f7",
+        "name": "TPD1FAN",
+        "cardCategory": "FAN",
+        "FixedNetworkElement.refParentNE": "SW-CityA-DIST-69"
+      },
+      {
+        "resId": "0b66ef50-af12-11ec-a894-286ed4a6f0f7",
+        "name": "TPD1SCAB",
+        "cardCategory": "MPU",
+        "FixedNetworkElement.refParentNE": "SW-CityA-DIST-69"
+      },
+      {
+        "resId": "68b6c489-235d-11ea-b4b3-286ed4a6f283",
+        "name": "TPB1PIU 32",
+        "cardCategory": "POWER",
+        "FixedNetworkElement.refParentNE": "BR-CityB-ACC-54"
+      },
+      {
+        "resId": "68b6ea3f-235d-11ea-b4b3-286ed4a6f283",
+        "name": "TPB3CXP 42",
+        "cardCategory": "MPU",
+        "FixedNetworkElement.refParentNE": "BR-CityB-ACC-54"
+      },
+      {
+        "resId": "777bbd1b-235d-11ea-a3da-286ed4a6f283",
+        "name": "FAN 28",
+        "cardCategory": "FAN",
+        "FixedNetworkElement.refParentNE": "NE-CityB-DIST-44"
+      },
+      {
+        "resId": "0b2e2c09-af12-11ec-a894-286ed4a6f0f7",
+        "name": "TPD1PSU",
+        "cardCategory": "POWER",
+        "FixedNetworkElement.refParentNE": "SW-CityA-DIST-69"
+      },
+      {
+        "resId": "68b6c43e-235d-11ea-b4b3-286ed4a6f283",
+        "name": "TPB1FAN 40",
+        "cardCategory": "FAN",
+        "FixedNetworkElement.refParentNE": "BR-CityB-ACC-54"
+      },
+      {
+        "resId": "68b6c476-235d-11ea-b4b3-286ed4a6f283",
+        "name": "TPB1PIU 38",
+        "cardCategory": "POWER",
+        "FixedNetworkElement.refParentNE": "BR-CityB-ACC-54"
+      },
+      {
+        "resId": "68b6c49e-235d-11ea-b4b3-286ed4a6f283",
+        "name": "TPB1FAN 39",
+        "cardCategory": "FAN",
+        "FixedNetworkElement.refParentNE": "BR-CityB-ACC-54"
+      },
+      {
+        "resId": "777be3a7-235d-11ea-a3da-286ed4a6f283",
+        "name": "FAN 29",
+        "cardCategory": "FAN",
+        "FixedNetworkElement.refParentNE": "NE-CityB-DIST-44"
+      },
+      {
+        "resId": "0adf48b0-af12-11ec-a894-286ed4a6f0f7",
+        "name": "TPD1SCAB",
+        "cardCategory": "MPU",
+        "FixedNetworkElement.refParentNE": "SW-CityA-DIST-69"
+      },
+      {
+        "resId": "0b01c4d4-af12-11ec-a894-286ed4a6f0f7",
+        "name": "TPD1PSU",
+        "cardCategory": "POWER",
+        "FixedNetworkElement.refParentNE": "SW-CityA-DIST-69"
+      },
+      {
+        "resId": "0b1e2677-af12-11ec-a894-286ed4a6f0f7",
+        "name": "TPD1PSU",
+        "cardCategory": "POWER",
+        "FixedNetworkElement.refParentNE": "SW-CityA-DIST-69"
+      },
+      {
+        "resId": "0b4361bc-af12-11ec-a894-286ed4a6f0f7",
+        "name": "TPD1PSU",
+        "cardCategory": "POWER",
+        "FixedNetworkElement.refParentNE": "SW-CityA-DIST-69"
+      },
+      {
+        "resId": "0b4e854d-af12-11ec-a894-286ed4a6f0f7",
+        "name": "TPD1PSU",
+        "cardCategory": "POWER",
+        "FixedNetworkElement.refParentNE": "SW-CityA-DIST-69"
+      }
+    ],
+    "FixedNetworkElement": [
+      {
+        "resId": "ad86ee9a-235e-11ea-b3e4-286ed4a6f27b",
+        "name": "BR-CityB-ACC-54"
+      },
+      {
+        "resId": "ad873c30-235e-11ea-b3e4-286ed4a6f27b",
+        "name": "NE-CityB-DIST-44"
+      },
+      {
+        "resId": "e0137928-af11-11ec-b48c-286ed4a6f23c",
+        "name": "SW-CityA-DIST-69"
+      }
+    ],
+    "FixedNetworkLTP": [
+      {
+        "resId": "779649db-235d-11ea-a3da-286ed4a6f283",
+        "name": "Eth-Trunk66",
+        "isPhysical": "False",
+        "FixedNetworkCard.refParentCard": "",
+        "FixedNetworkElement.refParentNE": "NE-CityB-DIST-44",
+        "FixedNetworkLTP.refParentLTP": "",
+        "FixedNetworkLTP.refTrunkLTP": ""
+      },
+      {
+        "resId": "779671f6-235d-11ea-a3da-286ed4a6f283",
+        "name": "GigabitEthernet6/0/3",
+        "isPhysical": "True",
+        "FixedNetworkCard.refParentCard": "CR57L5XFB 6/0",
+        "FixedNetworkElement.refParentNE": "NE-CityB-DIST-44",
+        "FixedNetworkLTP.refParentLTP": "",
+        "FixedNetworkLTP.refTrunkLTP": "Eth-Trunk66"
+      },
+      {
+        "resId": "77970d7c-235d-11ea-a3da-286ed4a6f283",
+        "name": "GigabitEthernet5/0/3",
+        "isPhysical": "True",
+        "FixedNetworkCard.refParentCard": "CR57L5XFB 5/0",
+        "FixedNetworkElement.refParentNE": "NE-CityB-DIST-44",
+        "FixedNetworkLTP.refParentLTP": "",
+        "FixedNetworkLTP.refTrunkLTP": "Eth-Trunk66"
+      },
+      {
+        "resId": "786be9dc-235d-11ea-a3da-286ed4a6f283",
+        "name": "Eth-Trunk66.274",
+        "isPhysical": "False",
+        "FixedNetworkCard.refParentCard": "",
+        "FixedNetworkElement.refParentNE": "NE-CityB-DIST-44",
+        "FixedNetworkLTP.refParentLTP": "Eth-Trunk66",
+        "FixedNetworkLTP.refTrunkLTP": ""
+      },
+      {
+        "resId": "78ad5fa3-235d-11ea-a3da-286ed4a6f283",
+        "name": "GigabitEthernet4/0/1",
+        "isPhysical": "True",
+        "FixedNetworkCard.refParentCard": "CR57L5XFB 4/0",
+        "FixedNetworkElement.refParentNE": "NE-CityB-DIST-44",
+        "FixedNetworkLTP.refParentLTP": "",
+        "FixedNetworkLTP.refTrunkLTP": ""
+      },
+      {
+        "resId": "79a553f1-235d-11ea-b4b3-286ed4a6f283",
+        "name": "Trail-6977",
+        "isPhysical": "True",
+        "FixedNetworkCard.refParentCard": "TPA2EG24 24",
+        "FixedNetworkElement.refParentNE": "BR-CityB-ACC-54",
+        "FixedNetworkLTP.refParentLTP": "",
+        "FixedNetworkLTP.refTrunkLTP": ""
+      },
+      {
+        "resId": "79a9c057-235d-11ea-b4b3-286ed4a6f283",
+        "name": "21-TPA1EX8S-6(RTR-CampusZ-ACC-04",
+        "isPhysical": "True",
+        "FixedNetworkCard.refParentCard": "TPA1EX8S 21",
+        "FixedNetworkElement.refParentNE": "BR-CityB-ACC-54",
+        "FixedNetworkLTP.refParentLTP": "",
+        "FixedNetworkLTP.refTrunkLTP": ""
+      },
+      {
+        "resId": "2a35ffe9-4ebd-11ec-a925-286ed4a6f283",
+        "name": "Circuit-7065",
+        "isPhysical": "False",
+        "FixedNetworkCard.refParentCard": "",
+        "FixedNetworkElement.refParentNE": "BR-CityB-ACC-54",
+        "FixedNetworkLTP.refParentLTP": "Trail-6977",
+        "FixedNetworkLTP.refTrunkLTP": ""
+      },
+      {
+        "resId": "1b681205-af12-11ec-a894-286ed4a6f0f7",
+        "name": "3-TPA6EX16S-2(BR-CityA-ACC-55",
+        "isPhysical": "True",
+        "FixedNetworkCard.refParentCard": "TPA6EX16S",
+        "FixedNetworkElement.refParentNE": "SW-CityA-DIST-69",
+        "FixedNetworkLTP.refParentLTP": "",
+        "FixedNetworkLTP.refTrunkLTP": ""
+      },
+      {
+        "resId": "1b68120a-af12-11ec-a894-286ed4a6f0f7",
+        "name": "3-TPA6EX16S-7(SW-CityA-CORE-49",
+        "isPhysical": "True",
+        "FixedNetworkCard.refParentCard": "TPA6EX16S",
+        "FixedNetworkElement.refParentNE": "SW-CityA-DIST-69",
+        "FixedNetworkLTP.refParentLTP": "",
+        "FixedNetworkLTP.refTrunkLTP": ""
+      }
+    ],
+    "FixedNetworkLink": [
+      {
+        "resId": "107892ce-afa3-11ec-b210-286ed4a6f0db",
+        "name": "Svc-4432",
+        "linkTypeName": "L2 Link",
+        "FixedNetworkLTP.refAEndLTP": "3-TPA6EX16S-7(SW-CityA-CORE-49",
+        "FixedNetworkLTP.refZEndLTP": "GigabitEthernet4/0/1"
+      },
+      {
+        "resId": "3eb3bf6f-afa3-11ec-bd26-286ed4a6f113",
+        "name": "SW-CampusZ-AGG-74",
+        "linkTypeName": "Fiber",
+        "FixedNetworkLTP.refAEndLTP": "3-TPA6EX16S-7(SW-CityA-CORE-49",
+        "FixedNetworkLTP.refZEndLTP": "GigabitEthernet4/0/1"
+      },
+      {
+        "resId": "9a6394af-afa3-11ec-b210-286ed4a6f0db",
+        "name": "NE-CityA-AGG-32",
+        "linkTypeName": "L2 Link",
+        "FixedNetworkLTP.refAEndLTP": "3-TPA6EX16S-2(BR-CityA-ACC-55",
+        "FixedNetworkLTP.refZEndLTP": "21-TPA1EX8S-6(RTR-CampusZ-ACC-04"
+      },
+      {
+        "resId": "d3337ec9-afa3-11ec-bd26-286ed4a6f113",
+        "name": "NE-MetroY-CORE-71",
+        "linkTypeName": "Fiber",
+        "FixedNetworkLTP.refAEndLTP": "3-TPA6EX16S-2(BR-CityA-ACC-55",
+        "FixedNetworkLTP.refZEndLTP": "21-TPA1EX8S-6(RTR-CampusZ-ACC-04"
+      },
+      {
+        "resId": "8a218afa-e0c9-4602-ac5c-90d5527247ea",
+        "name": "l-331",
+        "linkTypeName": "L2 Link",
+        "FixedNetworkLTP.refAEndLTP": "GigabitEthernet6/0/3",
+        "FixedNetworkLTP.refZEndLTP": ""
+      },
+      {
+        "resId": "00bff43e-7d9f-4ede-92a8-5fe0fd36754a",
+        "name": "l-328",
+        "linkTypeName": "L2 Link",
+        "FixedNetworkLTP.refAEndLTP": "GigabitEthernet5/0/3",
+        "FixedNetworkLTP.refZEndLTP": ""
+      }
+    ],
+    "PW": [
+      {
+        "resId": "30cefeb1-4ebd-11ec-a631-286ed4a6f22a",
+        "name": "PW(ETHERNET,174691,45.64.191.144)",
+        "FixedNetworkElement.refParentNE": "BR-CityB-ACC-54",
+        "PWE3XC.refPwe3Xc": "name",
+        "TunnelHop.refBindingTunnel": "TUNNELHOP=2434918"
+      },
+      {
+        "resId": "30cefeb6-4ebd-11ec-a631-286ed4a6f22a",
+        "name": "PW(ETHERNET,174691,147.68.192.150)",
+        "FixedNetworkElement.refParentNE": "NE-CityB-DIST-44",
+        "PWE3XC.refPwe3Xc": "name",
+        "TunnelHop.refBindingTunnel": "TUNNELHOP=2434916"
+      }
+    ],
+    "PWE3Trail": [
+      {
+        "resId": "2bd41154-4ebd-11ec-8000-286ed4a6f218",
+        "name": "Trail-4598",
+        "FixedNetworkElement.refAEndNE1": "BR-CityB-ACC-54",
+        "FixedNetworkElement.refZEndNE1": "NE-CityB-DIST-44",
+        "ServiceAccessPoint.refAEndLTP1": "24-TPA2EG24-9:53",
+        "ServiceAccessPoint.refZEndLTP1": "Eth-Trunk66"
+      }
+    ],
+    "PWE3XC": [
+      {
+        "resId": "f85f7666-236b-11ea-acb1-286ed4a6f27b",
+        "name": "name",
+        "FixedNetworkElement.refParentNE": "NE-CityB-DIST-44",
+        "PW.refZEndPWList": "PW(ETHERNET,174691,147.68.192.150)",
+        "ServiceAccessPoint.refEndLTPList": "Eth-Trunk66"
+      },
+      {
+        "resId": "317ace4a-4ebd-11ec-a631-286ed4a6f22a",
+        "name": "name",
+        "FixedNetworkElement.refParentNE": "BR-CityB-ACC-54",
+        "PW.refZEndPWList": "PW(ETHERNET,174691,45.64.191.144)",
+        "ServiceAccessPoint.refEndLTPList": "24-TPA2EG24-9:53"
+      }
+    ],
+    "PWTrail": [
+      {
+        "resId": "2bdba388-4ebd-11ec-8000-286ed4a6f218",
+        "name": "",
+        "FixedNetworkElement.refAEndNE": "BR-CityB-ACC-54",
+        "FixedNetworkElement.refZEndNE": "NE-CityB-DIST-44",
+        "PW.refAEndPW": "PW(ETHERNET,174691,45.64.191.144)",
+        "PW.refZEndPW": "PW(ETHERNET,174691,147.68.192.150)",
+        "PWE3Trail.refPwe3Trail": "Trail-4598",
+        "TunnelTrail.refTunnelList": "Tunnel0/0/2786"
+      }
+    ],
+    "ServiceAccessPoint": [
+      {
+        "resId": "2bd7e05e-4ebd-11ec-8000-286ed4a6f218",
+        "name": "24-TPA2EG24-9:53",
+        "FixedNetworkElement.refParentNE": "BR-CityB-ACC-54",
+        "FixedNetworkLTP.refBindingLTP": "Circuit-7065",
+        "FixedNetworkLTP.refPort": "Trail-6977",
+        "PWE3Trail.SAP.refService": "Trail-4598"
+      },
+      {
+        "resId": "2bd836f8-4ebd-11ec-8000-286ed4a6f218",
+        "name": "Eth-Trunk66",
+        "FixedNetworkElement.refParentNE": "NE-CityB-DIST-44",
+        "FixedNetworkLTP.refBindingLTP": "Eth-Trunk66.274",
+        "FixedNetworkLTP.refPort": "Eth-Trunk66",
+        "PWE3Trail.SAP.refService": "Trail-4598"
+      }
+    ],
+    "TunnelHop": [
+      {
+        "resId": "b7f5a426-4cd0-11ec-a631-286ed4a6f22a",
+        "name": "TUNNELHOP=2434918",
+        "Static.hopSequenceId": "3",
+        "FixedNetworkElement.refParentNE": "BR-CityB-ACC-54",
+        "FixedNetworkLTP.refAEndLTP": "21-TPA1EX8S-6(RTR-CampusZ-ACC-04",
+        "FixedNetworkLTP.refZEndLTP": "",
+        "TunnelTrail.refTunnelTrail": "Tunnel0/0/2786"
+      },
+      {
+        "resId": "b7f5a428-4cd0-11ec-a631-286ed4a6f22a",
+        "name": "TUNNELHOP=2434916",
+        "Static.hopSequenceId": "1",
+        "FixedNetworkElement.refParentNE": "NE-CityB-DIST-44",
+        "FixedNetworkLTP.refAEndLTP": "",
+        "FixedNetworkLTP.refZEndLTP": "GigabitEthernet4/0/1",
+        "TunnelTrail.refTunnelTrail": "Tunnel0/0/2786"
+      },
+      {
+        "resId": "9d823507-afb5-11ec-959c-286ed4a6f22a",
+        "name": "TUNNELHOP=2515923",
+        "Static.hopSequenceId": "2",
+        "FixedNetworkElement.refParentNE": "SW-CityA-DIST-69",
+        "FixedNetworkLTP.refAEndLTP": "3-TPA6EX16S-7(SW-CityA-CORE-49",
+        "FixedNetworkLTP.refZEndLTP": "3-TPA6EX16S-2(BR-CityA-ACC-55",
+        "TunnelTrail.refTunnelTrail": "Tunnel0/0/2786"
+      }
+    ],
+    "TunnelTrail": [
+      {
+        "resId": "70fe0604-afc0-11ec-8000-286ed4a6f218",
+        "name": "Tunnel0/0/2786",
+        "FixedNetworkElement.refAEndNE": "NE-CityB-DIST-44",
+        "FixedNetworkElement.refZEndNE": "BR-CityB-ACC-54",
+        "FixedNetworkLTP.refAEndPortNativeId": "GigabitEthernet4/0/1",
+        "FixedNetworkLTP.refZEndPortNativeId": "21-TPA1EX8S-6(RTR-CampusZ-ACC-04"
+      }
+    ]
+  }
+}
