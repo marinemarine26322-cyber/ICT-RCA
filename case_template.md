@@ -212,12 +212,6 @@
 | **ring** | 5 | 0 | 5 | 0% | 无 |
 | **📈 合计** | **152** | **54** | **98** | **35.5%** | - |
 
-> 💡 **测试验证要点**：
-> 1. **本端 vs 对端差异**：Agent 必须识别 `portOpticalPowerErrCode` 的差异（本端=`BOARD_STATUS_ABNORMAL`，对端=`NONE`/`RX_LOS`），否则易误判为光纤中断。
-> 2. **逻辑口防幻觉**：`isPhysical=false` 的聚合口，光功率相关字段应返回 `null`，Agent 不应尝试解析。
-> 3. **时间序因果**：`alarm` 的 `occurUtc` 必须满足 `BOARD_FAULT < PORT_DOWN < TUNNEL_DOWN < PW_DOWN`，这是排除并发故障的唯一依据。
-> 4. **对象边界**：`ne` 仅聚合故障清单，不改变管理状态 (`neStatus` 保持 `online`)；`ring`/`clock` 完全隔离，验证 Agent 是否具备“无关字段不干扰”的过滤能力。
-
 > **注**：为保证评测集完整性，Mock 数据应包含单板下**所有**受影响端口及其对端、所属聚合组、隧道、PW、SAP 的对应字段，而非仅一个示例。
 ---
 
