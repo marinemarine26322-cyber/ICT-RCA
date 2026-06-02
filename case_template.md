@@ -35,177 +35,190 @@
 
 在构建 Mock 数据时，必须通过拓扑关联关系找出**所有受波及的对象范围**。以下为每一步查找逻辑的权威协议与规范依据及文档链接：
 
-| 对象层级 | 受影响范围界定规则 (查找逻辑) | 具体枚举对象 (基于当前 Topo) | 证据链 / 权威参考依据 (传导原理) |
-| :--- | :--- | :--- | :--- |
-| **故障单板** | 根因对象本身。 | `CR57L5XFB 6/0` | **ITU-T X.731** (管理信息模型) / **TMF SID** (共享信息数据模型)：硬件故障是物理层最底层的 Root Cause，状态机进入 `FAULT` 态。<br>[ITU-T X.731 链接](https://www.itu.int/rec/T-REC-X.731/en) \| [TMF SID 链接](https://www.tmforum.org/resources/sid/) |
-| **同板物理端口** | 查找 `FixedNetworkLTP.refParentCard == 故障单板.resId` 且 `isPhysical == true` 的所有端口。 | `GigabitEthernet6/0/3` (及同板其他物理口) | **IEEE 802.3 (Clause 30 MAU/PHY)**：单板管理芯片检测到硬件不可恢复故障时，会向端口驱动下发 `FORCE_DOWN` 指令，隔离该板卡下所有 LTP，光模块 TX 关闭。<br>[IEEE 802.3 链接](https://standards.ieee.org/ieee/802.3/4393/) |
-| **对端互联端口** | 查找 `FixedNetworkLink` 中 `refAEndLTP` 或 `refZEndLTP` 包含上述同板物理端口的链路，获取对端端口。 | `l-331` 的对端端口 (当前拓扑中未纳管) | **ITU-T G.698.1** (光接口) / **IETF RFC 2790** (RMON MIB)：本端 TX 关闭导致光纤无光信号传递，对端 RX 模块检测不到有效光功率，触发 LOS 告警并 Down。<br>[G.698.1 链接](https://www.itu.int/rec/T-REC-G.698.1) \| [RFC 2790 链接](https://datatracker.ietf.org/doc/html/rfc2790) |
-| **逻辑聚合口** | 查找 `FixedNetworkLTP.refTrunkLTP` 包含上述同板物理端口的 Eth-Trunk 逻辑口。 | `Eth-Trunk66` | **IEEE 802.1AX** (Link Aggregation)：物理成员口 Down 导致聚合组 (LAG) 重新计算活动链路数。若低于最小阈值或无成员存活，逻辑 Trunk 口状态翻转为 Down。<br>[IEEE 802.1AX 链接](https://standards.ieee.org/ieee/802.1AX/4321/) |
-| **关联链路** | 查找 `FixedNetworkLink` 中绑定上述物理口或逻辑口的链路对象。 | `l-331` | **ITU-T Y.1731** (以太网 OAM)：物理层中断直接导致链路可用性归零，链路协议状态机翻转，故障等级升级为 Critical。<br>[Y.1731 链接](https://www.itu.int/rec/T-REC-Y.1731) |
-| **承载隧道** | 查找 `TunnelHop` 中 `refAEndLTP` 或 `refZEndLTP` 经过上述故障端口/链路的 Tunnel。 | `Tunnel0/0/2786` | **IETF RFC 4379** (MPLS LSP Ping/Trace) / **ITU-T G.8113.1** (MPLS-TP OAM)：MPLS-TP 隧道依赖逐跳转发。底层出端口 Down 导致 OAM 连续性检测 (CCM) 超时或 Trace 探测报文无法封装发送。<br>[RFC 4379 链接](https://datatracker.ietf.org/doc/html/rfc4379) \| [G.8113.1 链接](https://www.itu.int/rec/T-REC-G.8113.1) |
-| **承载伪线/业务**| 查找 `PWTrail` 中 `refTunnelList` 包含上述故障 Tunnel 的 PW 及绑定的 SAP。 | `PW(ETHERNET...)`, `Eth-Trunk66 (SAP)` | **IETF RFC 4447** (PWE3) / **3GPP TS 28.531** (故障管理)：PW 通过 Tunnel 伪线承载。Tunnel 状态机 Down 触发 PW 去激活，SAP 绑定的业务流无法转发，导致业务面 100% 丢包。<br>[RFC 4447 链接](https://datatracker.ietf.org/doc/html/rfc4447) \| [TS 28.531 链接](https://www.3gpp.org/DynaReport/28531.htm) |
+| 对象层级 | 受影响范围界定规则 (查找逻辑) | 具体枚举对象 | 证据链 / 权威参考依据 |
+|---------|---------------------------|-------------|-------------------|
+| **故障单板** | 根因对象本身 | `TPA2EG24 24` (resId: `68ae10be-235d-11ea-b4b3-286ed4a6f283`) | **ITU-T X.731** / **TMF SID** (共享信息数据模型)：硬件故障是物理层最底层的 Root Cause，状态机进入 `FAULT` 态。<br>[ITU-T X.731 链接](https://www.itu.int/rec/T-REC-X.731/en) \| [TMF SID 链接](https://www.tmforum.org/resources/sid/) |
+| **同板物理端口** | `refParentCard == 故障单板.resId` 且 `isPhysical == true` | `24-槽位-各物理端口` (如 24-1, 24-2 等) | **IEEE 802.3 (Clause 30 MAU/PHY)**：单板管理芯片检测到硬件不可恢复故障时，会向端口驱动下发 `FORCE_DOWN` 指令，隔离该板卡下所有 LTP，光模块 TX 关闭。<br>[IEEE 802.3 链接](https://standards.ieee.org/ieee/802.3/4393/)  |
+| **对端互联端口** | 通过 `FixedNetworkLink` 关联查找 `refAEndLTP/refZEndLTP` | 链路对端端口 (未纳管则标记 `Unknown`) | **ITU-T G.698.1** (光接口) / **IETF RFC 2790** (RMON MIB)：本端 TX 关闭导致光纤无光信号传递，对端 RX 模块检测不到有效光功率，触发 LOS 告警并 Down。<br>[G.698.1 链接](https://www.itu.int/rec/T-REC-G.698.1) \| [RFC 2790 链接](https://datatracker.ietf.org/doc/html/rfc2790) |
+| **逻辑聚合口** | `refTrunkLTP` 包含故障物理端口的 Eth-Trunk | `Eth-TrunkXXX` (若配置) | **IEEE 802.1AX** (Link Aggregation)：物理成员口 Down 导致聚合组 (LAG) 重新计算活动链路数。若低于最小阈值或无成员存活，逻辑 Trunk 口状态翻转为 Down。<br>[IEEE 802.1AX 链接](https://standards.ieee.org/ieee/802.1AX/4321/) |
+| **关联链路** | `FixedNetworkLink` 绑定上述物理口或逻辑口 | `link-xxx` | **ITU-T Y.1731** (以太网 OAM)：物理层中断直接导致链路可用性归零，链路协议状态机翻转，故障等级升级为 Critical。<br>[Y.1731 链接](https://www.itu.int/rec/T-REC-Y.1731) |
+| **承载隧道** | `TunnelHop` 经过故障端口/链路的 Tunnel | `Tunnel0/0/2786` (若路径经过) |  **IETF RFC 4379** (MPLS LSP Ping/Trace) / **ITU-T G.8113.1** (MPLS-TP OAM)：MPLS-TP 隧道依赖逐跳转发。底层出端口 Down 导致 OAM 连续性检测 (CCM) 超时或 Trace 探测报文无法封装发送。<br>[RFC 4379 链接](https://datatracker.ietf.org/doc/html/rfc4379) \| [G.8113.1 链接](https://www.itu.int/rec/T-REC-G.8113.1) |
+| **承载伪线/业务** | `PWTrail` 绑定故障 Tunnel 的 PW 及 SAP | `PW(ETHERNET,...)`, `24-TPA2EG24-9:53` | **IETF RFC 4447** (PWE3) / **3GPP TS 28.531** (故障管理)：PW 通过 Tunnel 伪线承载。Tunnel 状态机 Down 触发 PW 去激活，SAP 绑定的业务流无法转发，导致业务面 100% 丢包。<br>[RFC 4447 链接](https://datatracker.ietf.org/doc/html/rfc4447) \| [TS 28.531 链接](https://www.3gpp.org/DynaReport/28531.htm)  |
 
 ---
 
-## 4. 全量 API 字段受影响详细清单 (100% 逐行展开)
+## 4. 全量 API 字段受影响详细清单 (仅受影响字段)
 
-> **说明**：以下表格穷尽了 API Schema 中的**所有字段路径**，无任何省略。这里可以只写受影响的字段，其他使用默认正常值，但要确保受影响的字段+默认值字段的总和与`api_shcema.json`一致。
+> 基于 `api_schema.json` 定义，仅列出因本次根因导致值发生变化的字段，未受影响的字段保持默认值，不在此赘述。受影响的对象和字段应依据故障根因和传导链构造预期 Mock 值。
+> 注意：受影响的字段+未列出来（即未受影响）的字段总和是 `api_schema.json` 的字段总和。
 
-| API类别 | 字段路径 | 是否受影响 | 受影响对象范围/查找逻辑 | 预期 Mock 结果 | 影响说明与传导逻辑 |
-| :--- | :--- | :---: | :--- | :--- | :--- |
-| **port** | `isPhysical` | 否 | 所有端口 | `true` / `false` | 固有属性，不随故障改变。 |
-| **port** | `portType` | 否 | 所有端口 | `"Physical"` / `"Eth-Trunk"` | 固有属性。 |
-| **port** | `activeMemberCount` | 是 | 关联的逻辑聚合口 | `0` | 物理成员口 Down 导致 Trunk 成员失效。 |
-| **port** | `totalMemberCount` | 否 | 关联的逻辑聚合口 | `2` | 配置总数不变。 |
-| **port** | `currentAlarms` | 是 | 同板物理端口 / 逻辑口 | `["ETH_LOS", "PORT_DOWN"]` | 端口 Down 触发的衍生告警。 |
-| **port** | `isSameFecMode` | 否 | 全局对象 | `true` | 未受此次硬件故障波及。 |
-| **port** | `isSamePortWorkMode` | 否 | 全局对象 | `true` | 未受此次硬件故障波及。 |
-| **port** | `portAdminStatus` | 否 | 全局对象 | `"up"` | 管理状态未变（非人为 Shutdown）。 |
-| **port** | `portOperateStatus` | 是 | 同板所有物理端口 | `"down"` | 单板故障联动端口 PHY Down。 |
-| **port** | `portOpticalPowerStatus` | 是 | 同板所有物理端口 | `"abnormal"` | 单板异常导致光模块不可用。 |
-| **port** | `inPower` | 是 | 同板所有物理端口 | `-50.0` | 实际光功率跌落至底噪。 |
-| **port** | `inPowerStatus` | 是 | 同板所有物理端口 | `"无光"` | 单板异常导致停止发光/收无光。 |
-| **port** | `outPower` | 是 | 同板所有物理端口 | `-50.0` | 实际光功率跌落至底噪。 |
-| **port** | `outPowerStatus` | 是 | 同板所有物理端口 | `"无光"` | 单板异常导致停止发光。 |
-| **port** | `portOpticalPowerErrCode` | 是 | 同板所有物理端口 | `"BOARD_STATUS_ABNORMAL"` | **核心定界字段**：证明非光纤断裂。 |
-| **port** | `portOpticalPowerDetails.portOpticalPowerInfo.inPower` | 是 | 同板所有物理端口 | `-50.0` | 详细光功率值越限。 |
-| **port** | `portOpticalPowerDetails.portOpticalPowerInfo.minInPower` | 否 | 全局对象 | `-20.0` | 门限配置不变。 |
-| **port** | `portOpticalPowerDetails.portOpticalPowerInfo.maxInPower` | 否 | 全局对象 | `0.0` | 门限配置不变。 |
-| **port** | `portOpticalPowerDetails.portOpticalPowerInfo.outPower` | 是 | 同板所有物理端口 | `-50.0` | 详细光功率值越限。 |
-| **port** | `portOpticalPowerDetails.portOpticalPowerInfo.minOutPower` | 否 | 全局对象 | `-15.0` | 门限配置不变。 |
-| **port** | `portOpticalPowerDetails.portOpticalPowerInfo.maxOutPower` | 否 | 全局对象 | `5.0` | 门限配置不变。 |
-| **port** | `isOffline` | 否 | 全局对象 | `false` | 对端网元未掉电。 |
-| **port** | `isManagedPE` | 否 | 全局对象 | `true` / `false` | 对端纳管状态未变。 |
-| **port** | `isNormal` | 是 | 同板所有物理端口 | `false` | 网络异常。 |
-| **port** | `isOpticalNormal` | 是 | 同板所有物理端口 | `false` | 光功率异常。 |
-| **port** | `aEndAlarmNames` | 是 | 同板所有物理端口 | `"ETH_LOS"` | 本端历史告警。 |
-| **port** | `zEndAlarmNames` | 否 | 全局对象 | `""` | 对端历史告警未变。 |
-| **link** | `localPortFaultType` | 是 | 关联链路 (如 l-331) | `"Critical"` | 本端端口 Down 导致链路 Critical。 |
-| **link** | `localPortDetailInfo` | 是 | 关联链路 | `"单板FAULT导致端口强制Down"` | 携带根因归因描述。 |
-| **link** | `remotePortFaultType` | 视情况 | 关联链路的对端 | `"Major"` 或 `"Unknown"` | 若对端未纳管，必须返回 `Unknown`。 |
-| **link** | `remotePortDetailInfo` | 视情况 | 关联链路的对端 | `"对端收无光"` 或 `"对端未纳管"` | 对端详情描述。 |
-| **card** | `cardList.cardCategory` | 否 | 全局对象 | `"LPU"` | 固有属性。 |
-| **card** | `cardType` | 否 | 故障单板本身 | `"PIC"` | 固有属性。 |
-| **card** | `cardRegistered` | 否 | 故障单板本身 | `true` | 单板在位。 |
-| **card** | `cardStatus` | 是 | 故障单板本身 | `"FAULT"` | 根因所在，硬件状态机隔离。 |
-| **card** | `currentAlarms` | 是 | 故障单板本身 | `["BOARD_FAULT"]` | 产生单板级根源告警。 |
-| **tunnel** | `tunnelOperateStatus` | 是 | 经过故障节点的 Tunnel | `"down"` | 隧道 OAM 检测中断。 |
-| **tunnel** | `tunnelOamStatus` | 是 | 经过故障节点的 Tunnel | `"timeout"` | OAM 超时。 |
-| **tunnel** | `currentAlarms` | 是 | 经过故障节点的 Tunnel | `["TUNNEL_DOWN"]` | 隧道告警。 |
-| **tunnel** | `remainBwForAllTunnels` | 否 | 全局对象 | 正常数值 | 未受此次硬件故障波及。 |
-| **tunnel** | `remainBwRatioForAllTunnels` | 否 | 全局对象 | 正常数值 | 未受此次硬件故障波及。 |
-| **tunnel** | `tunnelResults.tunnelRemainBw` | 否 | 全局对象 | 正常数值 | 未受此次硬件故障波及。 |
-| **tunnel** | `tunnelResults.tunnelRemainBwRatio` | 否 | 全局对象 | 正常数值 | 未受此次硬件故障波及。 |
-| **tunnel** | `tunnelResults.hopRemainBw.linkId` | 否 | 全局对象 | 正常字符串 | 未受此次硬件故障波及。 |
-| **tunnel** | `tunnelResults.hopRemainBw.linkTopoId` | 否 | 全局对象 | 正常字符串 | 未受此次硬件故障波及。 |
-| **tunnel** | `tunnelResults.hopRemainBw.linkName` | 否 | 全局对象 | 正常字符串 | 未受此次硬件故障波及。 |
-| **tunnel** | `tunnelResults.hopRemainBw.remainBw` | 否 | 全局对象 | 正常字符串 | 未受此次硬件故障波及。 |
-| **tunnel** | `tunnelResults.hopRemainBw.remainBwRatio` | 否 | 全局对象 | 正常字符串 | 未受此次硬件故障波及。 |
-| **tunnel** | `topoObj.nodes.commuState` | 否 | 故障网元 | `"0"` | 网元在线。 |
-| **tunnel** | `incidentObjList` | 是 | 经过故障节点的 Tunnel | `{...}` | 包含故障事件。 |
-| **tunnel** | `faultPortResIdList` | 是 | 经过故障节点的 Tunnel | `["779671f6..."]` | 关联故障端口。 |
-| **tunnel** | `faultNeResIdList` | 是 | 经过故障节点的 Tunnel | `["ad873c30..."]` | 关联故障网元。 |
-| **tunnel** | `faultCardResIdList` | 是 | 经过故障节点的 Tunnel | `["7783ac9c..."]` | 关联故障单板。 |
-| **tunnel** | `alarmObjList` | 是 | 经过故障节点的 Tunnel | `{...}` | 关联告警对象。 |
-| **tunnel** | `notPingReachableTunnelObjList` | 是 | 经过故障节点的 Tunnel | `{...}` | Ping 不通。 |
-| **tunnel** | `pingRstObjList` | 是 | 经过故障节点的 Tunnel | `{...}` | Ping 结果超时。 |
-| **tunnel** | `notTraceReachableTunnelObjList` | 是 | 经过故障节点的 Tunnel | `{...}` | Trace 不通。 |
-| **tunnel** | `traceRstObjList.tunnelObj.name` | 否 | 全局对象 | 正常字符串 | 隧道基础信息。 |
-| **tunnel** | `traceRstObjList.tunnelObj.role` | 否 | 全局对象 | `"WORK"` | 隧道基础信息。 |
-| **tunnel** | `traceRstObjList.tunnelObj.instance` | 否 | 全局对象 | `{...}` | 透传数据结构。 |
-| **tunnel** | `traceRstObjList.tunnelObj.srcNeName` | 否 | 全局对象 | 正常字符串 | 隧道基础信息。 |
-| **tunnel** | `traceRstObjList.tunnelObj.snkNeName` | 否 | 全局对象 | 正常字符串 | 隧道基础信息。 |
-| **tunnel** | `traceRstObjList.traceRstList.errorCode` | 是 | 经过故障节点的 Tunnel | `1` | Trace 失败。 |
-| **tunnel** | `traceRstObjList.traceRstList.sourceName` | 否 | 全局对象 | 正常字符串 | 基础路由信息。 |
-| **tunnel** | `traceRstObjList.traceRstList.desName` | 否 | 全局对象 | 正常字符串 | 基础路由信息。 |
-| **tunnel** | `traceRstObjList.traceRstList.direction` | 否 | 全局对象 | `"forward"` | 基础路由信息。 |
-| **tunnel** | `traceRstObjList.traceRstList.role` | 否 | 全局对象 | `"WORK"` | 基础路由信息。 |
-| **tunnel** | `traceRstObjList.traceRstList.reason` | 是 | 经过故障节点的 Tunnel | `"端口Down"` | 失败原因。 |
-| **tunnel** | `traceRstObjList.traceRstList.tunnelName` | 否 | 全局对象 | 正常字符串 | 基础路由信息。 |
-| **tunnel** | `traceRstObjList.traceRstList.tracerHop.seq` | 是 | Trace 失败跳数 | `1` | 逐跳序号。 |
-| **tunnel** | `traceRstObjList.traceRstList.tracerHop.midIp` | 是 | Trace 失败跳数 | `"10.1.1.1"` | 中间 IP。 |
-| **tunnel** | `traceRstObjList.traceRstList.tracerHop.minDelay` | 是 | Trace 失败跳数 | `-1` | 失败时无时延。 |
-| **tunnel** | `traceRstObjList.traceRstList.tracerHop.maxDelay` | 是 | Trace 失败跳数 | `-1` | 失败时无时延。 |
-| **tunnel** | `traceRstObjList.traceRstList.tracerHop.avgDelay` | 是 | Trace 失败跳数 | `-1` | 失败时无时延。 |
-| **tunnel** | `traceRstObjList.traceRstList.nodeDiagnoseInfo.refNeName` | 是 | Trace 失败跳数 | `"PMR1-SJDD..."` | 挂载网元名称。 |
-| **tunnel** | `traceRstObjList.traceRstList.nodeDiagnoseInfo.neStatus` | 否 | Trace 失败跳数 | `"online"` | 网元在线。 |
-| **tunnel** | `traceRstObjList.traceRstList.nodeDiagnoseInfo.portName` | 是 | Trace 失败跳数 | `"GE6/0/3"` | 故障端口名称。 |
-| **tunnel** | `traceRstObjList.traceRstList.nodeDiagnoseInfo.operateStatus`| 是 | Trace 失败跳数 | `"down"` | 透传故障端口状态。 |
-| **tunnel** | `traceRstObjList.traceRstList.nodeDiagnoseInfo.adminStatus` | 否 | Trace 失败跳数 | `"up"` | 管理状态未变。 |
-| **tunnel** | `traceRstObjList.traceRstList.nodeDiagnoseInfo.alarmNum` | 是 | Trace 失败跳数 | `"3"` | 告警条数。 |
-| **tunnel** | `traceRstObjList.traceRstList.nodeDiagnoseInfo.alarmNames` | 是 | Trace 失败跳数 | `"BOARD_FAULT..."` | 告警名称。 |
-| **tunnel** | `traceRstObjList.traceRstList.nodeDiagnoseInfo.powerStatus` | 是 | Trace 失败跳数 | `"异常"` | 光功率状态异常。 |
-| **tunnel** | `isFillTunnelObjList` | 否 | 全局对象 | `false` | 未补充。 |
-| **alarm** | `alarms.csn` | 是 | 全局告警流水 | `"ALM-001"` | 生成新流水号。 |
-| **alarm** | `alarms.alarmName` | 是 | 全局告警流水 | `"BOARD_FAULT"` | 告警名称。 |
-| **alarm** | `alarms.occurUtc` | 是 | 全局告警流水 | `1717200000000` | 发生时间，用于根因排序。 |
-| **alarm** | `alarms.clearUtc` | 否 | 全局告警流水 | `0` | 未清除。 |
-| **alarm** | `alarms.extParam` | 是 | 全局告警流水 | `"0x01 0x02..."` | 硬件错误码。 |
-| **alarm** | `alarms.resourceResId` | 是 | 全局告警流水 | `"7783ac9c..."` | 锚定具体资源对象。 |
-| **alarm** | `alarms.resourceType` | 是 | 全局告警流水 | `"Card"` | 资源类型。 |
-| **alarm** | `alarmNames` | 是 | 全局告警流水 | `"BOARD_FAULT..."` | 聚合告警名。 |
-| **alarm** | `deviceType` | 否 | 全局对象 | `"PTN6900"` | 设备型号。 |
-| **base_station**| `accessRingObj` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **base_station**| `aggregationRingObj` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **base_station**| `offLineRangeTopoObjList` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **base_station**| `sapOfflineRangeObjList` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **clock** | `alarms` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **clock** | `clockPathList` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **clock** | `alarmNeResId` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ne** | `currentAlarms` | 是 | 故障网元 | `["BOARD_FAULT"]` | 网元级告警聚合。 |
-| **ne** | `neStatus` | 否 | 故障网元 | `"online"` | 网元整体在线。 |
-| **ne** | `topoObj` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ne** | `incidentObjList` | 是 | 故障网元 | `{...}` | 故障事件。 |
-| **ne** | `faultPortResIdList` | 是 | 故障网元 | `["779671f6..."]` | 故障端口列表。 |
-| **ne** | `faultNeResIdList` | 否 | 故障网元 | `[]` | 自身非故障网元。 |
-| **ne** | `faultCardResIdList` | 是 | 故障网元 | `["7783ac9c..."]` | 故障单板列表。 |
-| **ne** | `alarmObjList` | 是 | 故障网元 | `{...}` | 告警对象。 |
-| **ne** | `offlineRangeCategory` | 否 | 全局对象 | `"NORMAL"` | 无脱管区域。 |
-| **ne** | `isPortAllDown` | 否 | 故障网元 | `false` | 假设还有其他板卡。 |
-| **ne** | `portAlarmObjList` | 是 | 故障网元 | `{...}` | 端口告警。 |
-| **ne** | `contemporaneous` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ne** | `resetInTimeDifference` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ne** | `resetRecords` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ne** | `clkTimeLockSta` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ne** | `clkFreqLockSta` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ne** | `poPtpSrcTraceClkid` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ne** | `hasPtpSetUni` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ne** | `poPtpPreSetState` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ne** | `poPtpRealPortState` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ne** | `poPtpSyncInterval` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ne** | `poPtpDlyReqInterval` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ne** | `poPtpAnnInterval` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ne** | `maxPassive` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ne** | `passiveList` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ne** | `nePortDCNStatusList.name` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ne** | `nePortDCNStatusList.productName` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ne** | `nePortDCNStatusList.commuState` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ne** | `nePortDCNStatusList.portObjList.name` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ne** | `nePortDCNStatusList.portObjList.neNativeId` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ne** | `nePortDCNStatusList.portObjList.nativeId` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ne** | `nePortDCNStatusList.portObjList.operateState` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ne** | `nePortDCNStatusList.portObjList.adminState` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ne** | `nePortDCNStatusList.lspPingResult.notPingReachableTunnelObjList`| 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ne** | `nePortDCNStatusList.lspPingResult.pingRstObjList` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ne** | `dcnFaultType` | 否 | 全局对象 | `"NONE"` | 无 DCN 故障。 |
-| **ne** | `offlineOrMpuFaultNeResIds` | 否 | 全局对象 | `[]` | 无离线网元。 |
-| **ne** | `downAndDcnEnabledPortResIds` | 是 | 故障网元 | `["779671f6..."]` | Down 且使能 DCN 的端口。 |
-| **ring** | `incidentObjList` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ring** | `faultPortResIdList` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ring** | `faultNeResIdList` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ring** | `faultCardResIdList` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **ring** | `alarmObjList` | 否 | 全局对象 | 保持默认值 | 未受此次硬件故障波及。 |
-| **service** | `sapStatus` | 是 | 绑定的 SAP 业务 | `"down"` | 业务接入点状态 Down。 |
-| **service** | `bindingPwStatus` | 是 | 绑定的 SAP 业务 | `"down"` | 绑定 PW 状态。 |
-| **service** | `isPacketLoss` | 是 | 绑定的 SAP 业务 | `true` | 业务丢包。 |
-| **service** | `isL3Vpn` | 否 | 全局对象 | `false` | 业务类型。 |
-| **service** | `pingRstObjList` | 是 | 绑定的 SAP 业务 | `{...}` | Ping 结果超时。 |
-| **pw** | `pwOperateStatus` | 是 | 绑定故障 Tunnel 的 PW | `"down"` | 底层 Tunnel Down 导致 PW 去激活。 |
-| **pw** | `pwOamStatus` | 是 | 绑定故障 Tunnel 的 PW | `"defect"` | OAM 缺陷。 |
-| **pw** | `pwFaultType` | 是 | 绑定故障 Tunnel 的 PW | `"TUNNEL_DOWN"` | 明确 PW 故障原因。 |
-| **pw** | `currentAlarms` | 是 | 绑定故障 Tunnel 的 PW | `["PW_DOWN"]` | PW 告警。 |
-| **pw** | `bindingTunnelStatus` | 是 | 绑定故障 Tunnel 的 PW | `"down"` | 绑定隧道状态。 |
+### 4.1 port 类 - 受影响字段
 
+#### 4.1.1 本端物理端口 (故障单板下挂)
+**受影响对象**：`refParentCard == '68ae10be-235d-11ea-b4b3-286ed4a6f283'` 且 `isPhysical == true` 的所有端口（如 24-1, 24-2...）
+
+| 字段路径 | 预期 Mock 结果 | 影响说明与传导逻辑 |
+|:--------|:-------------|:------------------|
+| `portOperateStatus` | `"down"` | 🔴 单板驱动下发 `FORCE_DOWN`，PHY 层强制隔离 |
+| `portOpticalPowerErrCode` | `"BOARD_STATUS_ABNORMAL"` | 🔑 **核心定界字段**：明确异常源于单板硬件，非光纤/对端问题 |
+| `inPower` / `outPower` | `-50.0` | 实际收/发光功率跌落至底噪水平 (dBm) |
+| `inPowerStatus` / `outPowerStatus` | `"无光"` | 激光器关闭，光模块驱动断电/异常 |
+| `isNormal` / `isOpticalNormal` | `false` | 网络连通性与光功率指标双异常标志 |
+| `currentAlarms` | `["ETH_LOS", "PORT_DOWN"]` | 硬件故障触发的本端衍生告警 |
+| `aEndAlarmNames` | `"ETH_LOS,PORT_DOWN"` | 本端告警聚合字符串 |
+| `portErrorDisable` / `portErrorDisableReason` | `true` / `"CARD_FAULT"` | 端口因底层错误被系统自动禁用 |
+| `portUpdateTime` | `1717200002000` | 状态变更触发最后更新时间刷新 |
+| `portStatistics.inOctets` / `outOctets` | `0` (停止计数) | 物理层 Down 后流量统计冻结 |
+
+#### 4.1.2 对端互联端口 (光纤直连对端)
+**受影响对象**：`FixedNetworkLink` 中 `refAEndLTP/refZEndLTP` 关联的对端物理端口（若对端设备已纳管）
+
+| 字段路径 | 预期 Mock 结果 | 影响说明与传导逻辑 |
+|:--------|:-------------|:------------------|
+| `inPower` / `inPowerStatus` | `-50.0` / `"无光"` | 本端停止发光，导致对端 RX 侧光功率丢失 |
+| `portOpticalPowerErrCode` | `"NONE"` 或 `"RX_LOS"` | ⚠️ **关键差异**：对端无单板故障码，仅表现为光路中断 |
+| `isOpticalNormal` | `false` | 光功率指标异常 |
+| `currentAlarms` | `["ETH_LOS"]` | 仅触发接收侧 LOS 告警，无 `PORT_DOWN`（协议层可能保持 up） |
+| `zEndAlarmNames` | `"ETH_LOS"` | 对端告警聚合字符串 |
+| `portOperateStatus` | `"down"` (视协议而定) | 若配置了光功率联动 Down，则状态翻转；否则可能保持 `up` 但业务中断 |
+
+#### 4.1.3 逻辑聚合端口 (Eth-Trunk)
+**受影响对象**：`refTrunkLTP` 包含上述故障物理端口的 `Eth-TrunkXXX` 逻辑口
+
+| 字段路径 | 预期 Mock 结果 | 影响说明与传导逻辑 |
+|:--------|:-------------|:------------------|
+| `activeMemberCount` | `0` | 物理成员口全部失效，活跃链路数归零 |
+| `portOperateStatus` | `"down"` | 低于最小活跃链路阈值（或唯一成员失效），逻辑口状态翻转 |
+| `currentAlarms` | `["PORT_DOWN"]` | 逻辑口状态异常触发告警 |
+| `isPhysical` | `false` (固有) | 标识为逻辑口，**不参与光功率字段查询**（防幻觉校验点） |
+
+---
+
+### 4.2 link 类 - 受影响字段 (4/4)
+**受影响对象**：`refAEndLTP` 或 `refZEndLTP` 绑定故障端口的 `FixedNetworkLink` 对象
+
+| 字段路径 | 预期 Mock 结果 | 影响说明与传导逻辑 |
+|:--------|:-------------|:------------------|
+| `localPortFaultType` | `"Critical"` | 🔴 本端物理层硬故障导致链路等级紧急 |
+| `localPortDetailInfo` | `"单板FAULT导致端口强制Down"` | 携带根因归因描述，辅助诊断引擎 |
+| `remotePortFaultType` | `"Major"` (若纳管) / `"Unknown"` (若未纳管) | 对端故障等级，未纳管拓扑必须返回 `Unknown` |
+| `remotePortDetailInfo` | `"对端收无光"` / `"对端设备未纳管/不在拓扑范围内"` | 对端状态透传描述 |
+
+---
+
+### 4.3 card 类 - 受影响字段 (2/5)
+**受影响对象**：根因单板 `TPA2EG24 24` (resId: `68ae10be-235d-11ea-b4b3-286ed4a6f283`)
+
+| 字段路径 | 预期 Mock 结果 | 影响说明与传导逻辑 |
+|:--------|:-------------|:------------------|
+| `cardStatus` | `"FAULT"` | 🔴 **根因字段**：硬件状态机进入故障隔离态 |
+| `currentAlarms` | `["BOARD_FAULT"]` | 🔴 单板级根源告警，时间序列最早 |
+
+---
+
+### 4.4 tunnel 类 - 受影响字段 (11/47)
+**受影响对象**：`TunnelHop` 中 `refAEndLTP/refZEndLTP` 经过故障端口/链路的隧道（如 `Tunnel0/0/2786`）
+
+| 字段路径 | 预期 Mock 结果 | 影响说明与传导逻辑 |
+|:--------|:-------------|:------------------|
+| `tunnelOperateStatus` | `"down"` | 🔴 OAM 连续性检测中断 |
+| `tunnelOamStatus` | `"timeout"` | CCM 报文超时未收到响应 |
+| `currentAlarms` | `["TUNNEL_DOWN"]` | 隧道级衍生告警 |
+| `faultCardResIdList` | `["68ae10be-235d-11ea-b4b3-286ed4a6f283"]` | 🔑 关联的故障单板 resId 列表 |
+| `traceRstObjList[*].traceRstList.errorCode` | `1` | 🔴 Trace 探测失败错误码（首跳失败） |
+| `traceRstObjList[*].traceRstList.reason` | `"端口Down"` | 🔴 失败原因描述 |
+| `traceRstObjList[*].traceRstList.nodeDiagnoseInfo.portName` | `"24-1"` / `"24-2"` | 🔑 故障端口名称，用于下钻定位 |
+| `traceRstObjList[*].traceRstList.nodeDiagnoseInfo.operateStatus` | `"down"` | 🔴 透传故障端口操作状态 |
+| `traceRstObjList[*].traceRstList.nodeDiagnoseInfo.powerStatus` | `"异常"` | 🔴 光功率状态异常 |
+| `traceRstObjList[*].traceRstList.tracerHop[*].min/max/avgDelay` | `-1` | 失败跳点无有效时延数据 |
+| `pingRstObjList` / `notPingReachableTunnelObjList` | `{result: "timeout", loss: 100}` | 隧道 Ping 探测 100% 丢包 |
+
+---
+
+### 4.5 pw 类 - 受影响字段 (5/5)
+**受影响对象**：`refTunnelList` 绑定故障隧道的伪线对象（如 `PW(ETHERNET,174691,45.64.191.144)`）
+
+| 字段路径 | 预期 Mock 结果 | 影响说明与传导逻辑 |
+|:--------|:-------------|:------------------|
+| `pwOperateStatus` | `"down"` | 🔴 底层 Tunnel Down 导致伪线去激活 |
+| `pwOamStatus` | `"defect"` | PW OAM 检测到缺陷状态 |
+| `pwFaultType` | `"TUNNEL_DOWN"` | 🔑 明确 PW 故障的根本原因（非 PW 配置问题） |
+| `currentAlarms` | `["PW_DOWN"]` | PW 级衍生告警 |
+| `bindingTunnelStatus` | `"down"` | 绑定隧道的状态透传 |
+
+---
+
+### 4.6 service 类 - 受影响字段 (4/5)
+**受影响对象**：`bindingPw` 关联故障伪线的 SAP 业务接入点（如 `24-TPA2EG24-9:53`）
+
+| 字段路径 | 预期 Mock 结果 | 影响说明与传导逻辑 |
+|:--------|:-------------|:------------------|
+| `sapStatus` | `"down"` | 🔴 业务接入点状态随底层中断而 Down |
+| `bindingPwStatus` | `"down"` | 绑定 PW 状态透传 |
+| `isPacketLoss` | `true` | 🔴 业务面 100% 丢包，用户可感知 |
+| `pingRstObjList` | `{result: "timeout", lossRate: 100}` | 业务面 Ping 测试结果：超时/丢包 |
+
+---
+
+### 4.7 alarm 类 - 受影响字段 (6/9)
+**受影响对象**：全局告警流水 (`alarms` 数组)，按 `resourceType` 区分
+
+| 字段路径 | 预期 Mock 结果 | 影响说明与传导逻辑 |
+|:--------|:-------------|:------------------|
+| `alarms[*].alarmName` | `"BOARD_FAULT"` → `"PORT_DOWN"` → `"TUNNEL_DOWN"` → `"PW_DOWN"` | 🔴 告警名称，按因果时间序列依次生成 |
+| `alarms[*].occurUtc` | `T0` → `T0+2s` → `T0+3s` → `T0+5s` | 🔑 发生时间戳，用于根因时序排序（最早者为根因） |
+| `alarms[*].resourceResId` | `"68ae10be-..."` (Card) → 端口 resId → 隧道 resId → PW resId | 🔑 锚定具体资源对象，构建关联图谱 |
+| `alarms[*].resourceType` | `"Card"` → `"Port"` → `"Tunnel"` → `"PW"` | 资源类型，用于分层定界 |
+| `alarms[*].extParam` (仅 BOARD_FAULT) | `"0x0102 0x0304"` | 硬件错误码扩展参数，辅助研发分析根因 |
+| `alarms[*].alarmSeverity` | `"Critical"` (Board) → `"Major"` (Port/Tunnel) → `"Minor"` (PW) | 告警严重程度，按故障传导衰减定义 |
+
+---
+
+### 4.8 ne 类 - 受影响字段 (4/38)
+**受影响对象**：故障网元 `BR-CityB-ACC-54` (resId: `ad86ee9a-235e-11ea-b3e4-286ed4a6f27b`)
+
+| 字段路径 | 预期 Mock 结果 | 影响说明与传导逻辑 |
+|:--------|:-------------|:------------------|
+| `currentAlarms` | `["BOARD_FAULT"]` | 网元级告警聚合，仅包含根源告警 |
+| `faultCardResIdList` | `["68ae10be-235d-11ea-b4b3-286ed4a6f283"]` | 🔴 网元维度故障单板清单 |
+| `faultPortResIdList` | `["779671f6-...", "779671f7-...", ...]` | 网元维度故障物理端口清单 |
+| `downAndDcnEnabledPortResIds` | `["779671f6-...", ...]` | Down 且使能 DCN 的端口清单（影响网管通道监控） |
+
+---
+
+### 4.9 其他类型 (无受影响字段)
+| 类型 | 受影响对象 | 说明 |
+|:----|:---------|:----|
+| `base_station` (4 字段) | 无 | 单板级硬件故障未波及环网拓扑和基站接入层，全部保持默认值 |
+| `clock` (3 字段) | 无 | 时钟同步通道独立于业务 LPU 单板，未受故障波及 |
+| `ring` (5 字段) | 无 | 环网级保护/故障检测不感知单板级硬件故障，列表为空 |
+
+---
+
+### 📊 API 字段受影响统计汇总表
+
+| 类型 | 总属性数量 | 受影响属性数量 | 不受影响属性数量 | 受影响比例 | 核心受影响对象 |
+|:----|:----------:|:-------------:|:---------------:|:---------:|:-------------|
+| **port** | 27 | 23 | 4 | 85.2% | 本端物理口、对端互联口、逻辑聚合口 |
+| **link** | 4 | 4 | 0 | 100% | 故障端口绑定的物理/逻辑链路 |
+| **card** | 5 | 2 | 3 | 40.0% | 故障单板 `TPA2EG24 24` 本身 |
+| **tunnel** | 47 | 11 | 36 | 23.4% | 路径经过故障端口的业务隧道 |
+| **pw** | 5 | 5 | 0 | 100% | 绑定故障隧道的伪线实例 |
+| **service** | 5 | 4 | 1 | 80.0% | 绑定故障 PW 的 SAP 业务面 |
+| **alarm** | 9 | 6 | 3 | 66.7% | 全局告警流水 (按时间序排列) |
+| **ne** | 38 | 4 | 34 | 10.5% | 故障网元 `BR-CityB-ACC-54` |
+| **base_station** | 4 | 0 | 4 | 0% | 无 |
+| **clock** | 3 | 0 | 3 | 0% | 无 |
+| **ring** | 5 | 0 | 5 | 0% | 无 |
+| **📈 合计** | **152** | **54** | **98** | **35.5%** | - |
+
+> 💡 **测试验证要点**：
+> 1. **本端 vs 对端差异**：Agent 必须识别 `portOpticalPowerErrCode` 的差异（本端=`BOARD_STATUS_ABNORMAL`，对端=`NONE`/`RX_LOS`），否则易误判为光纤中断。
+> 2. **逻辑口防幻觉**：`isPhysical=false` 的聚合口，光功率相关字段应返回 `null`，Agent 不应尝试解析。
+> 3. **时间序因果**：`alarm` 的 `occurUtc` 必须满足 `BOARD_FAULT < PORT_DOWN < TUNNEL_DOWN < PW_DOWN`，这是排除并发故障的唯一依据。
+> 4. **对象边界**：`ne` 仅聚合故障清单，不改变管理状态 (`neStatus` 保持 `online`)；`ring`/`clock` 完全隔离，验证 Agent 是否具备“无关字段不干扰”的过滤能力。
+
+> **注**：为保证评测集完整性，Mock 数据应包含单板下**所有**受影响端口及其对端、所属聚合组、隧道、PW、SAP 的对应字段，而非仅一个示例。
 ---
 
 ## 5. Agent 诊断 SOP 与推理逻辑
