@@ -4,10 +4,14 @@ Convert topology_anonymized.md to JSON format.
 
 This script parses the markdown file containing topology tables and converts
 them into a structured JSON format for easier programmatic access.
+
+Usage:
+    python scripts/convert_topology_to_json.py [--input INPUT] [--output OUTPUT]
 """
 
 import json
 import re
+import argparse
 from pathlib import Path
 
 
@@ -119,8 +123,36 @@ def convert_to_json(input_file: str, output_file: str) -> dict:
 
 def main():
     """Main entry point."""
-    input_file = Path(__file__).parent / "topology_anonymized.md"
-    output_file = Path(__file__).parent / "topology_anonymized.json"
+    parser = argparse.ArgumentParser(
+        description="Convert topology markdown file to JSON format"
+    )
+    parser.add_argument(
+        "--input", "-i",
+        type=str,
+        default=None,
+        help="Input markdown file path (default: data/topology_anonymized.md)"
+    )
+    parser.add_argument(
+        "--output", "-o",
+        type=str,
+        default=None,
+        help="Output JSON file path (default: data/topology_anonymized.json)"
+    )
+    
+    args = parser.parse_args()
+    
+    # Determine paths
+    base_dir = Path(__file__).parent.parent
+    
+    if args.input:
+        input_file = Path(args.input)
+    else:
+        input_file = base_dir / "data" / "topology_anonymized.md"
+    
+    if args.output:
+        output_file = Path(args.output)
+    else:
+        output_file = base_dir / "data" / "topology_anonymized.json"
     
     if not input_file.exists():
         print(f"Error: Input file not found: {input_file}")

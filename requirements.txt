@@ -1,0 +1,7 @@
+# ICT-RCA Dependencies
+
+# Core dependencies (none required for basic functionality)
+
+# Development dependencies
+pytest>=7.0
+pytest-cov>=4.0

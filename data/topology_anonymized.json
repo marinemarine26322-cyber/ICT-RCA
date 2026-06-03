@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "source_file": "/workspace/topology_anonymized.md",
+    "source_file": "/workspace/data/topology_anonymized.md",
     "resource_types": [
       "FixedNetworkCard",
       "FixedNetworkElement",
