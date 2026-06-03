@@ -1,7 +1,7 @@
 {
   "port": {
     "isPhysical": {
-      "description": "(boolean) 是否为物理端口。用于区分物理口、Eth-Trunk、子接口。逻辑口查询光功率时应返回null。",
+      "description": "(boolean) 是否为物理端口。用于区分物理口、Eth-Trunk、子接口。",
       "change_type": "added"
     },
     "portType": {
@@ -10,10 +10,6 @@
     },
     "activeMemberCount": {
       "description": "(integer) Eth-Trunk 当前处于 Up 状态的成员口数量。",
-      "change_type": "added"
-    },
-    "totalMemberCount": {
-      "description": "(integer) Eth-Trunk 配置的总成员口数量。",
       "change_type": "added"
     },
     "currentAlarms": {
@@ -58,7 +54,7 @@
       "change_type": "modified"
     },
     "portOpticalPowerErrCode": {
-      "description": "(enum) 端口光功率错误码：NONE, DEV_OFFLINE, BOARD_STATUS_ABNORMAL, NOT_APPLICABLE(逻辑口)。",
+      "description": "(enum) 端口光功率错误码：NONE, DEV_OFFLINE, BOARD_STATUS_ABNORMAL",
       "original_description": "(enum(string)) 端口光功率错误码，NONE：无报错，DEV_OFFLINE：端口所属网元离线，BOARD_STATUS_ABNORMAL：端口所属单板状态异常",
       "change_type": "modified"
     },
@@ -285,37 +281,6 @@
       "description": "(boolean) 是否对隧道列表进行了补充"
     }
   },
-  "alarm": {
-    "alarms.csn": {
-      "description": "(string) 流水号"
-    },
-    "alarms.alarmName": {
-      "description": "(string) 告警名称"
-    },
-    "alarms.occurUtc": {
-      "description": "(integer) 发生时间，单位为毫秒的时间戳"
-    },
-    "alarms.clearUtc": {
-      "description": "(integer) 清除时间，单位为毫秒的时间戳"
-    },
-    "alarms.extParam": {
-      "description": "(string) 告警的扩展参数"
-    },
-    "alarms.resourceResId": {
-      "description": "(string) 产生该告警的具体资源对象 resId。",
-      "change_type": "added"
-    },
-    "alarms.resourceType": {
-      "description": "(enum) 资源类型：NE, Card, Port, Link, Tunnel, PW。",
-      "change_type": "added"
-    },
-    "alarmNames": {
-      "description": "(string)"
-    },
-    "deviceType": {
-      "description": "(string) 告警源网元型号"
-    }
-  },
   "base_station": {
     "accessRingObj": {
       "description": "(unknown) 接入环"
@@ -476,14 +441,6 @@
     }
   },
   "service": {
-    "sapStatus": {
-      "description": "(string) 业务接入点(SAP)状态：up, down。",
-      "change_type": "added"
-    },
-    "bindingPwStatus": {
-      "description": "(string) 绑定的 PW 状态：up, down。",
-      "change_type": "added"
-    },
     "isPacketLoss": {
       "description": "(boolean) 是否丢包"
     },
@@ -497,22 +454,6 @@
   "pw": {
     "pwOperateStatus": {
       "description": "(string) 伪线运行状态：up, down, admin-down。",
-      "change_type": "added"
-    },
-    "pwOamStatus": {
-      "description": "(string) 伪线 OAM 状态：normal, defect, disabled。",
-      "change_type": "added"
-    },
-    "pwFaultType": {
-      "description": "(string) 伪线故障类型：NONE, TUNNEL_DOWN, PW_FORWARD_MISMATCH, OAM_TIMEOUT。",
-      "change_type": "added"
-    },
-    "currentAlarms": {
-      "description": "(array) 当前 PW 挂载的活动告警列表。",
-      "change_type": "added"
-    },
-    "bindingTunnelStatus": {
-      "description": "(string) 绑定的底层 Tunnel 状态：up, down。",
       "change_type": "added"
     }
   }
